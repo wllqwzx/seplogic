@@ -2,7 +2,7 @@ Require Import util.
 Require Import Coq.Arith.Arith.
 Require Import Coq.Bool.Bool.
 Require Import Coq.Strings.String.
-
+Require Import Coq.Logic.FunctionalExtensionality.
 
 Definition store := id -> nat.
 
@@ -86,6 +86,57 @@ Proof.
 Qed.
 
 
+Lemma disjoint_comm : forall h1 h2,
+  disjoint h1 h2 <-> disjoint h2 h1.
+Proof.
+  intros. unfold disjoint. split.
+  -intros. destruct H with l.
+   +right. assumption.
+   +left. assumption.
+  -intros. destruct H with l.
+   +right. assumption.
+   +left. assumption.
+Qed.
 
+
+Lemma disjoint_elim_union_a : forall h1 h2 h3,
+  disjoint h1 (h_union h2 h3) ->
+  disjoint h1 h2.
+Proof.
+  intros. unfold disjoint in *.
+  intros. destruct H with l.
+  -left. assumption.
+  -right. unfold h_union, not_in_dom in *.
+   destruct (in_not_in_dec l h2).
+   +assumption.
+   +unfold not_in_dom in *. assumption.
+Qed.
+
+
+Lemma disjoint_elim_union_b : forall h1 h2 h3,
+  disjoint h1 (h_union h2 h3) ->
+  disjoint h1 h3.
+Proof.
+  intros. unfold disjoint in *.
+  intros. destruct H with l.
+  -left. assumption.
+  -right. unfold h_union, not_in_dom in *.
+   destruct (in_not_in_dec l h2).
+   +unfold in_dom in *. destruct i. rewrite H1 in H0.
+    inversion H0.
+   +assumption.
+Qed.
+
+
+Lemma h_union_emp_heap : forall h,
+  h_union emp_heap h = h.
+Proof.
+  intros. unfold h_union.
+  apply functional_extensionality. intros.
+  destruct (in_not_in_dec x emp_heap).
+  -unfold in_dom in *. destruct i. unfold emp_heap in *.
+   inversion H.
+  -reflexivity.
+Qed.
 
 

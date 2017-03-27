@@ -83,5 +83,13 @@ Proof.
 Qed.
 
 
-
-
+Lemma conj2disj : forall p1 p2 p3,
+  p1 ** p2 ==> p3 ->
+  p1 ==> p2 --* p3.
+Proof.
+  unfold strongerThan, s_imp. intros. destruct s.
+  unfold sep_disj. intros. unfold sep_conj in *.
+  apply H. exists h. exists h'. split.
+  -apply disjoint_comm. assumption.
+  -split. +reflexivity. +split; assumption.
+Qed.
