@@ -22,10 +22,19 @@ Inductive command : Type :=
 | CSeq    : command -> command -> command
 | CIf     : bexp  -> command -> command -> command
 | CWhile  : bexp -> command -> command
-| CCons   : id -> aexp -> aexp -> command
+| CCons   : id -> aexp -> command
 | CLookup : id -> aexp -> command
 | CMutat  : aexp -> aexp -> command
 | CDispose: aexp -> command.
+
+
+
+Definition W : id := Id "W".
+Definition X : id := Id "X".
+Definition Y : id := Id "Y".
+Definition Z : id := Id "Z".
+Definition M : id := Id "M".
+Definition N : id := Id "N".
 
 
 

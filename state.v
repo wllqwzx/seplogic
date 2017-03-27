@@ -71,4 +71,21 @@ Inductive ext_state : Type :=
 
 
 
+(* Lemma *)
+Lemma h_update_equal : forall x h l n,
+  in_dom x h ->
+  h l = None ->
+  h x = (h_update h l n) x.
+Proof.
+  intros.
+  unfold h_update, in_dom in *.
+  destruct (l =? x) eqn:Ha.
+  -apply beq_nat_true in Ha. subst. destruct H.
+   rewrite H in H0. inversion H0.
+  -reflexivity.
+Qed.
+
+
+
+
 

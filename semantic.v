@@ -49,18 +49,21 @@ Inductive big_step: command -> state -> ext_state -> Prop :=
 | E_WhileEnd : forall b sto h c,
                  beval sto b = false ->
                  big_step (CWhile b c) (sto, h) (St (sto, h))
-| E_WhileLoop : forall sto h opst b c,
+| E_WhileLoop : forall sto h opst b c st,
                   beval sto b = true ->
-                  big_step (CSeq c (CWhile b c)) (sto, h) opst ->
+                  big_step c (sto, h) (St st) ->
+                  big_step (CWhile b c) st opst ->
                   big_step (CWhile b c) (sto, h) opst
-| E_Cons : forall sto h a1 a2 n1 n2 x l,
-              aeval sto a1 = n1 ->
-              aeval sto a2 = n2 ->
+| E_WhileLoop_Ab : forall sto h b c,
+                  beval sto b = true ->
+                  big_step c (sto, h) Abt ->
+                  big_step (CWhile b c) (sto, h) Abt
+| E_Cons : forall sto h a n x l,
+              aeval sto a = n ->
               h l = None ->
-              h (l + 1) = None ->
-              big_step (CCons x a1 a2) (sto, h)
+              big_step (CCons x a) (sto, h)
                        (St (st_update sto x l,
-                            h_update (h_update h (l + 1) n2) l n1))
+                            h_update h l n))
 | E_Lookup : forall sto h x a1 n1 n2,
                 aeval sto a1 = n1 ->
                 h n1 = Some n2 ->
@@ -89,7 +92,7 @@ Inductive big_step: command -> state -> ext_state -> Prop :=
                     h n1 = None ->
                     big_step (CDispose a1) (sto, h) Abt.
 
-
+Notation "c1 '/' st '\\' opst" := (big_step c1 st opst) (at level 40, st at level 39).
 
 
 
