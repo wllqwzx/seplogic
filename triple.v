@@ -229,9 +229,65 @@ Qed.
 
 
 
+(* mutation *)
+Theorem rule_mutate : forall P a1 a2,
+  {{fun st => exists loc, ((aeval (fst st) a1) = loc) /\
+              exists val, ((snd st) loc) = Some val /\
+              P ((fst st), (h_update (snd st) loc (aeval (fst st) a2))) }}
+  (CMutat a1 a2)
+  {{P}}.
+Proof.
+  intros. unfold triple. intros. inversion H. subst.
+  -inversion H0. simpl in *. destruct H1. destruct H2.
+   destruct H2. rewrite H1. assumption.
+  -subst. destruct H0. destruct H0. destruct H1. destruct H1.
+   simpl in *. rewrite <- H0 in H1. rewrite H1 in H6.
+   inversion H6.
+Qed.
 
 
 
+
+
+
+(* look up *)
+Theorem rule_lookup : forall P a x,
+  {{fun st => exists loc, ((aeval (fst st) a) = loc) /\
+              exists val, ((snd st) loc) = Some val /\
+              P ((st_update (fst st) x val), (snd st))
+  }}
+  (CLookup x a)
+  {{P}}.
+Proof.
+  intros. unfold triple. intros. inversion H. subst.
+  -destruct H0. destruct H0. destruct H1. destruct H1.
+   simpl in *. rewrite <- H0 in H1. rewrite H1 in H6.
+   inversion H6. subst. assumption.
+  -subst. destruct H0. destruct H0. destruct H1. 
+   destruct H1. simpl in *. rewrite H0 in H6.
+   rewrite H1 in H6. inversion H6.
+Qed.
+
+
+
+
+
+(* dispose *)
+Theorem rule_dispose : forall P a,
+  {{fun st => exists loc, ((aeval (fst st) a) = loc) /\
+              exists val, ((snd st) loc) = Some val /\
+              P ((fst st), 
+                 (fun l => if (eq_nat_dec l loc) then None else (snd st) l))
+  }}
+  (CDispose a)
+  {{P}}.
+Proof.
+  intros. unfold triple. intros. inversion H. subst.
+  -destruct H0. destruct H0. destruct H1. destruct H1.
+   simpl in *. rewrite H0. assumption.
+  -subst. destruct H0. destruct H0. destruct H1. destruct H1.
+   simpl in *. rewrite <- H0 in H1. rewrite H1 in H3. inversion H3.
+Qed.
 
 
 
