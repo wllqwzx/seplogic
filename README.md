@@ -8,7 +8,7 @@ An implementation of separation logic in Coq
 Require Import seplogic.
 
 
-Example alloc_text1 :
+Example alloc_test1 :
   {{ emp }}
   (CCons X (ANum 1))
   {{(AId X) |-> (ANum 1)}}.
@@ -24,7 +24,7 @@ Proof.
    reflexivity.
 Qed.
 
-Example alloc_text2 :
+Example alloc_test2 :
   {{ emp }}
   (CSeq (CCons X (ANum 1))
         (CCons Y (ANum 2)))
